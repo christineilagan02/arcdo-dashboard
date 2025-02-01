@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, BarElement, Tooltip, Legend, CategoryScale, LinearScale } from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { CornerRightUp, CornerLeftDown } from 'lucide-react';
+import axios from 'axios';
 
 
 // Register the required components for Chart.js
@@ -12,11 +13,8 @@ const Overview = () => {
   const [activeTab, setActiveTab] = useState("HTEs");
   const [clickedBarIndex, setClickedBarIndex] = useState(null);
   const [selectedYear, setSelectedYear] = useState("2020");
-  
 
-  
-
-  const data = {
+  const [data, setData] = useState({
     summaryCards: [
       { title: "Host Training Establishments (HTEs)", value: "7265", change: "+11.01%" },
       { title: "Memorandum of Agreements (MOAs)", value: "3671", change: "-0.03%" },
@@ -68,7 +66,7 @@ const Overview = () => {
 
       ],
     },
-  };
+  });
 
   const [clickedCard, setClickedCard] = useState(null);
 

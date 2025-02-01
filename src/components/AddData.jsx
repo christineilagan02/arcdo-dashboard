@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 const AddData = () => {
   const [formType, setFormType] = useState('');
@@ -21,8 +22,9 @@ const AddData = () => {
       middleName: '',
       lastName: '',
       campus: '',
+      college: '',
       emailAddress: '',
-      contactNumber: '',
+      assignStudent: '',
       officeLocation: '',
     },
   });
@@ -48,10 +50,32 @@ const AddData = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData); // Submit form data
+  
+    console.log("📤 Submitting form data:", JSON.stringify({ formType, formData }, null, 2));
+  
+    try {
+      const response = await axios.post("http://localhost:3001/api/addData", {
+        formType,
+        formData: {
+          ...formData,
+          dateOfValidation: formData.dateOfValidation || null,  // Ensures null if empty
+          dateOfExpiration: formData.dateOfExpiration || null,  // Prevents undefined values
+          remarks: formData.remarks || null,  // Ensures optional remarks
+        }
+      });
+  
+      console.log("✅ Success:", response.data);
+      alert("Data added successfully!");
+    } catch (error) {
+      console.error("❌ Error submitting form:", error.response?.data || error.message);
+      alert("Error: " + (error.response?.data?.message || "Failed to submit data."));
+    }
   };
+  
+  
+  
 
   return (
     <div className="bg-gray-50 md:ml-[250px] mt-10 p-7 min-h-screen overflow-auto">
@@ -275,6 +299,28 @@ const AddData = () => {
                   className="mt-2 p-2 border border-gray-300 rounded-md w-full"
                 />
               </div>
+              <div>
+                <label htmlFor="ojtCoordinator.college" className="block text-gray-700">College</label>
+                <input
+                  type="text"
+                  id="ojtCoordinator.college"
+                  name="ojtCoordinator.college"
+                  value={formData.ojtCoordinator.college}
+                  onChange={handleInputChange}
+                  className="mt-2 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="ojtCoordinator.assignStudent" className="block text-gray-700">Assigned Student</label>
+                <input
+                  type="tel"
+                  id="ojtCoordinator.assignStudent"
+                  name="ojtCoordinator.assignStudent"
+                  value={formData.ojtCoordinator.assignStudent}
+                  onChange={handleInputChange}
+                  className="mt-2 p-2 border border-gray-300 rounded-md w-full"
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -289,18 +335,6 @@ const AddData = () => {
                 />
               </div>
               <div>
-                <label htmlFor="ojtCoordinator.contactNumber" className="block text-gray-700">Contact Number</label>
-                <input
-                  type="tel"
-                  id="ojtCoordinator.contactNumber"
-                  name="ojtCoordinator.contactNumber"
-                  value={formData.ojtCoordinator.contactNumber}
-                  onChange={handleInputChange}
-                  className="mt-2 p-2 border border-gray-300 rounded-md w-full"
-                />
-              </div>
-            </div>
-            <div>
               <label htmlFor="ojtCoordinator.officeLocation" className="block text-gray-700">Office Location</label>
               <input
                 type="text"
@@ -310,6 +344,7 @@ const AddData = () => {
                 onChange={handleInputChange}
                 className="mt-2 p-2 border border-gray-300 rounded-md w-full"
               />
+            </div>
             </div>
           </>
         )}
